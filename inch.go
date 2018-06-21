@@ -91,6 +91,8 @@ type Simulator struct {
 	PointsPerSeries  int
 	FieldsPerPoint   int
 	FieldPrefix      string
+	MeasurementName  string
+	TagName          string
 	BatchSize        int
 	TargetMaxLatency time.Duration
 	Gzip             bool
@@ -125,6 +127,7 @@ func NewSimulator() *Simulator {
 		PointsPerSeries: 100,
 		FieldsPerPoint:  1,
 		FieldPrefix:     "v0",
+		MeasurementName: "m0",
 		BatchSize:       5000,
 		Database:        "db",
 		ShardDuration:   "7d",
@@ -346,7 +349,7 @@ func (s *Simulator) generateBatches() <-chan []byte {
 
 		// Write points.
 		var lastMN int
-		lastM := []byte("m0")
+		lastM := []byte(s.MeasurementName)
 		for i := 0; i < s.PointN(); i++ {
 			lastMN = i % s.Measurements
 			lastM = append(lastM[:1], []byte(strconv.Itoa(lastMN))...)
